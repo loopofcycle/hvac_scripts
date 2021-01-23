@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RpsAddin>
+  <RibbonPanel text="Export specification">
+    <PushButton text="Export specification" src="export_specification.py"/>
+  </RibbonPanel>
+</RpsAddin>

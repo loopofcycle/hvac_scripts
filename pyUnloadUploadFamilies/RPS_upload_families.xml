@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RpsAddin>
+  <RibbonPanel text="Upload families">
+    <PushButton text="Upload families!" src="upload_families.py"/>
+  </RibbonPanel>
+</RpsAddin>

@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RpsAddin>
+  <RibbonPanel text="Print PDF">
+    <PushButton text="Print PDF!" src="print_sheets.py"/>
+  </RibbonPanel>
+</RpsAddin>

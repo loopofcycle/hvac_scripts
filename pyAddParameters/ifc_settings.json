@@ -1,0 +1,10 @@
+{
+  "IFCDoors": {
+    "AcousticRating":"float",
+    "SecurityRating":"text",
+    "DurabilityRating": "text",
+    "ThermalTransmittance":"float",
+    "GlazingAreaFraction":"float",
+    "HandicapAccessible": "bool"
+  }
+}

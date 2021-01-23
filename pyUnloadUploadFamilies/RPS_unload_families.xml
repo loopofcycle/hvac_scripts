@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RpsAddin>
+  <RibbonPanel text="Unload families">
+    <PushButton text="Unload families!" src="unload_families.py"/>
+  </RibbonPanel>
+</RpsAddin>
