@@ -8,7 +8,7 @@ try:
     from System.Windows.Media.Imaging import BitmapImage
     from System import Uri
     #insert path to scripts in next line
-    path_to_scripts = os.path.abspath(r"C:\\Users\\igor\\Google Диск\\Code\\")
+    path_to_scripts = os.path.abspath(r"C:\\Users\\igor\\Google Диск\\Code\\revit_scripts\\")
     scripts = {
         'PrintPDF':
         {
@@ -39,6 +39,16 @@ try:
             'small_img': r"PythonScript16x16.png",
             'description': 'unload families',
             'pb_name': 'pb_unload families'
+        },
+        'NumerateHoles':
+        {
+            'folder': os.path.join(path_to_scripts, 'pyNumerateHoles'),
+            'name': r"pyNumerateHoles.py",
+            'dll': r"RPS_numerate_holes.dll",
+            'large_img': r"PythonScript32x32.png",
+            'small_img': r"PythonScript16x16.png",
+            'description': 'numerate holes',
+            'pb_name': 'pb_numerate holes'
         },
         # 'UploadFamilies':
         # {

@@ -6,7 +6,7 @@ from Autodesk.Revit.UI import *
 
 
 def GetFormatAndOrientation(width, height):
-    formats = json.load(open("C:\\Users\\igor\\Google Диск\\Code\\pyPrintPDF\\formats.json"))
+    formats = json.load(open("C:\\Users\\igor\\Google Диск\\Code\\revit_scripts\\pyPrintPDF\\formats.json"))
     for format_name, properties in formats.items():
         if properties['width'] == width and properties['height'] == height:
             return [properties['name'], properties['orientation']]
