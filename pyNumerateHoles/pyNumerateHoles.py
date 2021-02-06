@@ -20,7 +20,7 @@ def define_level():
 
 def elevation_as_comment(hole):
 	if hole.Name.Contains('в стене'):
-		elevation = hole.LookupParameter('Смещение').AsDouble() - hole.LookupParameter('Высота отверстия').AsDouble()
+		elevation = hole.LookupParameter('Смещение').AsDouble() - hole.LookupParameter('Высота отверстия').AsDouble() / 2
 		elevation = str(int(elevation * ft_to_mm))
 		result = elevation[:-3] + ',' + elevation[-3:] 
 	if hole.Name.Contains('в перекрытии'):
