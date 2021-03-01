@@ -19,13 +19,32 @@ def define_level():
 	return fec.ToElements()
 
 def elevation_as_comment(hole):
-	if hole.Name.Contains('в стене'):
+	result = '-'
+	if hole.Name.Contains('в стене') and hole.Symbol.FamilyName.Contains('прямоугольное'):
 		elevation = hole.LookupParameter('Смещение').AsDouble() - hole.LookupParameter('Высота отверстия').AsDouble() / 2
 		elevation = str(int(elevation * ft_to_mm))
 		result = elevation[:-3] + ',' + elevation[-3:] 
 	if hole.Name.Contains('в перекрытии'):
-		result = '-'
+		result = 'в перекрытии'
 	return result
+
+def make_holes_dict(holes):
+	holes_dict = {}
+	for hole in holes:
+		holes_dict[hole] = {}
+		holes_dict[hole]['level'] = hole.LevelId 
+		holes_dict[hole]['elevation'] = hole.LookupParameter('Смещение').AsDouble()
+		if hole.Symbol.FamilyName.Contains('прямоугольное'):
+			holes_dict[hole]['height'] = hole.LookupParameter('Высота отверстия').AsDouble()
+			holes_dict[hole]['width'] = hole.LookupParameter('Ширина отверстия').AsDouble()
+		if holes_dict[hole]['elevation'] < 0:
+			holes_dict[hole]['new level'] = 'call define level'
+			holes_dict[hole]['new elevation'] = 'call define elevation'
+		else:
+			holes_dict[hole]['new level'] = holes_dict[hole]['level'] 
+			holes_dict[hole]['new elevation'] = holes_dict[hole]['elevation']
+		holes_dict[hole]['comment'] = elevation_as_comment(hole)
+	return holes_dict
 
 fec=FilteredElementCollector(doc)
 fec.OfCategory(BuiltInCategory.OST_GenericModel)
@@ -34,24 +53,10 @@ fec.WhereElementIsNotElementType()
 holes = [hole for hole in fec.ToElements() if hole.Name.Contains('Отверстие')]
 print('collected:', len(fec.ToElements()), 'holes')
 
-holes_dict = {}
-for hole in holes:
-	holes_dict[hole] = {}
-	holes_dict[hole]['level'] = hole.LevelId 
-	holes_dict[hole]['elevation'] = hole.LookupParameter('Смещение').AsDouble()
-	holes_dict[hole]['height'] = hole.LookupParameter('Высота отверстия').AsDouble()
-	holes_dict[hole]['width'] = hole.LookupParameter('Ширина отверстия').AsDouble()
-	if holes_dict[hole]['elevation'] < 0:
-		holes_dict[hole]['new level'] = 'call define level'
-		holes_dict[hole]['new elevation'] = 'call define elevation'
-	else:
-		holes_dict[hole]['new level'] = holes_dict[hole]['level'] 
-		holes_dict[hole]['new elevation'] = holes_dict[hole]['elevation']
-	holes_dict[hole]['comment'] = elevation_as_comment(hole)
-	
-levels = define_level()
+holes_dict = make_holes_dict(holes)
 #pprint.pprint(holes_dict, indent=2)
 
+#levels = define_level()
 t = Transaction(doc, 'This is my new transaction')
 t.Start()
 for hole in holes:

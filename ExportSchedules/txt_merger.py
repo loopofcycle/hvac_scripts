@@ -7,7 +7,7 @@ from docx_printer import DocxPrinter
 HEADER_blanks = 8
 delimiter = '\t'
 docx_file_name = 'specification.docx'
-docx_template = 'C:\\Users\\igor\\Google Диск\\Code\\pyExportSchedules\\specification.docx'
+docx_template = 'C:\\Users\\igor\\Google Диск\\Code\\revit_scripts\\pyExportSchedules\\specification.docx'
 desktop = os.path.expanduser("~\\Desktop")
 prefix = 'ОВ.С_'
 
