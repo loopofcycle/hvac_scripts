@@ -5,7 +5,7 @@ clr.AddReference('RevitAPIUI')
 clr.AddReference('RevitServices')
 from Autodesk.Revit.DB import *
 from Autodesk.Revit.UI import *
-os.chdir('C:\\Users\\igor\\Google Диск\\Code\\pyAddParameters\\')
+os.chdir('C:\\Users\\igor\\gdrive\\Code\\revit_scripts\\AddParameters\\')
 from parameters_manager import ParametersManager
 
 doc = __revit__.ActiveUIDocument.Document

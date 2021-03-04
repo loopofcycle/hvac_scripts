@@ -64,3 +64,4 @@ for hole in holes:
 	comment.Set(holes_dict[hole]['comment'])
 t.Commit()
 print('executed at -', time.localtime()[1:-3])
+__window__.Close()

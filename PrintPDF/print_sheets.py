@@ -6,7 +6,7 @@ from Autodesk.Revit.UI import *
 
 
 def GetFormatAndOrientation(width, height):
-    formats = json.load(open("C:\\Users\\igor\\Google Диск\\Code\\revit_scripts\\pyPrintPDF\\formats.json"))
+    formats = json.load(open("C:\\Users\\igor\\gdrive\\Code\\revit_scripts\\PrintPDF\\formats.json"))
     for format_name, properties in formats.items():
         if properties['width'] == width and properties['height'] == height:
             return [properties['name'], properties['orientation']]
@@ -66,3 +66,4 @@ for view in views:
 		sheets[view.SheetNumber]['format'] = GetFormatAndOrientation(width, height)[0]
 		sheets[view.SheetNumber]['orientation'] = GetFormatAndOrientation(width, height)[1]
 for sheet, properties in sorted(sheets.items()): PrintSheet(properties)
+__window__.Close()

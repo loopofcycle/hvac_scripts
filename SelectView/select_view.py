@@ -19,7 +19,7 @@ def views_as_args(views):
 	return args
 
 def show_dialog(args):
-	dialog_window = 'C:\dialog_window.py'
+	dialog_window = "C:\\Users\\igor\\gdrive\\Code\\revit_scripts\\SelectView\\dialog_window.py"
 	output = subprocess.check_output("python {path} {args}".format(path=dialog_window, args=args))
 	return output
 
