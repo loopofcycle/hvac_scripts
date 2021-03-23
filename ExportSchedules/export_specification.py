@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
-from Autodesk.Revit.DB import ViewSchedule, ViewScheduleExportOptions
-from Autodesk.Revit.DB import ExportColumnHeaders, ExportTextQualifier
-from Autodesk.Revit.DB import BuiltInCategory, ViewSchedule
-from Autodesk.Revit.UI import *
-
 import os
-import subprocess
-txt_merger = 'C:\\Users\\igor\\Google Диск\\Code\\pyExportSchedules\\txt_merger.py'
-schedules_merger = 'C:\\Users\\igor\\Google Диск\\Code\\pyExportSchedules\\merge_schedules.py'
+from Autodesk.Revit.DB import *
+from Autodesk.Revit.UI import *
 
 doc = __revit__.ActiveUIDocument.Document
 uidoc = __revit__.ActiveUIDocument
 
+txt_merger = 'C:\\Users\\igor\\gdrive\\Code\\revit_scripts\\ExportSchedules\\txt_merger.py'
+schedules_merger = 'C:\\Users\\igor\\gdrive\\Code\\revit_scripts\\ExportSchedules\\merge_schedules.py'
 desktop = os.path.expanduser("~\\Desktop")
-vseop = ViewScheduleExportOptions()
-spec_name = 'specification.csv'
 prefix = 'ОВ.С_'
+vseop = ViewScheduleExportOptions()
 
 schedules = []
 for schedule in FilteredElementCollector(doc).OfClass(ViewSchedule).ToElements():
@@ -25,7 +20,6 @@ for schedule in schedules:
 	filename = "".join(x for x in schedule.ViewName if x not in ['*']) + '.txt'
 	schedule.Export(desktop, filename, vseop)
 
-PYTHON3 = r"C://Users//igor//AppData//Local//Programs//Python//Python38-32"
-if os.path.exists(PYTHON3):
-	#os.system('start python \"{path}\"'.format(path=schedules_merger))
-	print('Done')
+os.system("python {path}".format(path=schedules_merger))
+#os.system("python {path}".format(path=txt_merger))
+__window__.Close()
