@@ -44,154 +44,38 @@ class modelRoom(GeometryEntity):
 				self.all_points.append(line.GetEndPoint(1))
 			self.set_endpoints(self.all_points)
 
-
-class BoundrySegment():
-	def __init__(self, line, start_point, coord='X', limit='max'):
-		self.coord = coord
-		self.limit = limit
-		self.data = {line: start_point}
-		self.start_point = start_point
-		self.end_point = start_point
-		self.max_length = 15
-		self.aproximation = 2
-		self.sub_segment = None
-
-	def calc_length(self):
-		length = self.start_point.DistanceTo(self.end_point)
-		if self.sub_segment is not None:
-			length += self.sub_segment.calc_length()
-		return length
-	
-	def add_point(self, line, point):
-		if self.coord == 'X':
-			point_segm_coord, point_ort_coord = point.X, point.Y
-			end_segm_coord, end_ort_coord = self.end_point.X, self.end_point.Y
-		if self.coord == 'Y':
-			point_segm_coord, point_ort_coord = point.Y, point.X
-			end_segm_coord, end_ort_coord = self.end_point.Y, self.end_point.X
-
-		if self.limit == 'max':
-			higher_than_end = point_ort_coord > end_ort_coord
-		if self.limit == 'min':
-			higher_than_end = point_ort_coord < end_ort_coord
-
-		ort_difference = abs(point_ort_coord - end_ort_coord)
-		distance_to_endpoint = abs(point_segm_coord - end_segm_coord)
-
-		if higher_than_end:
-			#print(self.coord, self.limit, 'adding point: ', point.ToString(), 'after: ', self.end_point.ToString())
-			self.sub_segment = None
-			self.data[line] = point
-			self.end_point = point
-
-		#if not higher_than_end and self.sub_segment is None:
-		#	print(self.coord, self.limit, 'creating subsegment at:', point.ToString())
-		#	self.sub_segment = BoundrySegment(line, point, self.coord, self.limit)
-
-		#if not higher_than_end and self.sub_segment.calc_length() < self.max_length:
-		#	print(self.coord, self.limit, 'adding to subsegment at:', point.ToString())
-		#	print('subsegment length', self.sub_segment.calc_length())
-		#	self.sub_segment.add_point(line, point)
-		
-		#if not higher_than_end and self.sub_segment.calc_length() > self.max_length:
-		#	print(self.coord, self.limit, 'updated with subsegment at:', point.ToString())
-		#	print('subsegment length', self.sub_segment.calc_length())
-		#	self.data.update(self.sub_segment.data)
-		#	self.sub_segment = None
-		#	self.data[line] = point
-		#	self.end_point = point
-
-		if ort_difference < self.aproximation and distance_to_endpoint < self.max_length:
-			#print(self.coord, self.limit, 'adding point: ', point.ToString(), 'after: ', self.end_point.ToString(), 'ort_dif: ', ort_difference)
-			self.sub_segment = None
-			self.data[line] = point
-			self.end_point = point
+class modelSegment():
+	def __init__(self, axis, limit, lines):
+		pass
 
 
 class modelBoundry():
-	def __init__(self, start=0, end=10, step=1, points=[], axis='X', limit='max'):
+	def __init__(self, start=0, end=10, step=1, lines=[], axis='X', limit='max'):
 		self.axis = axis
 		self.limit = limit
 		self.step = step
 		self.start = start
 		self.end = end
 		
-		self.data = {}
-		self.__create_points_data(points)
-		
-		self.segments = {}
-		self.__build_segments()		
+		self.data = self.__create_lines_data(lines)
+		self.segments = self.__build_segments()
 
-	def add_point(self, data, line, point):
-		if not data.get(line):
-			data[line] = point
-
-		else:
-			if self.axis == 'X':
-				point_segm_coord = point.X
-				point_ort_coord = point.Y
-				data_point_ort_coord = data[line].Y
-			
-			if self.axis == 'Y':
-				point_segm_coord = point.Y
-				point_ort_coord = point.X
-				data_point_ort_coord = data[line].X
-			
-			if self.limit == 'max':
-				local_extreme = point_ort_coord > data_point_ort_coord
-
-			if self.limit == 'min':
-				local_extreme = point_ort_coord < data_point_ort_coord
-
-			if line < point_segm_coord < (line + self.step):
-				if local_extreme:
-					data[line] = point
-		
-	def __get_leveled_points(self, points):
-		leveled_points = {}
-		for point in points:
-			if leveled_points.get(str(point.Z)):
-				leveled_points[str(point.Z)].append(point)
+	def __create_lines_data(self, lines):
+		leveled_lines = {}
+		for line in lines:
+			if leveled_lines.get(line.Origin.Z):
+				leveled_lines[line.Origin.Z].append(line)
 			else:
-				leveled_points[str(point.Z)] = [point]
-		return leveled_points
-
-	def __clean_data(self, data):
-		clean_data = {}
-		for line, point in data.items():
-			if point not in clean_data.values():
-				clean_data[line] = point
-		
-		return clean_data
-
-	def __create_points_data(self, points):
-		leveled_points = self.__get_leveled_points(points)
-		for level, points in leveled_points.items():
-			self.data[level] = {}
-			for line in range(self.start, self.end + 2, self.step):
-				for point in points:
-					self.add_point(self.data[level], line, point)
-			self.__clean_data(self.data[level])
+				leveled_lines[line.Origin.Z] = [line]
+		return leveled_lines
 
 	def __build_segments(self):
-		for level, data in self.data.items():
-			if self.limit == 'min':
-				line = sorted(data.keys())[0]
-				point = data[line]
-				segment = BoundrySegment(line, point, coord=self.axis, limit=self.limit)
-				for line in sorted(data.keys()):
-					point = data[line]
-					segment.add_point(line, point)
+		segments = {}
+		for level, lines in self.data.items():
+			segment = modelSegment(self.axis, self.limit, lines)
+			segments.update({level: segment})
 
-			if self.limit == 'max':
-				line = sorted(data.keys())[-1]
-				point = data[line]
-				segment = BoundrySegment(line, point, coord=self.axis, limit=self.limit)
-				for line in reversed(sorted(data.keys())):
-					point = data[line]
-					segment.add_point(line, point)
-			
-			self.segments.update({level: segment})
+		return segments
 
 
 class modelPerimeter(GeometryEntity):
@@ -232,7 +116,7 @@ class modelPerimeter(GeometryEntity):
 			self.boundaries[orient] = modelBoundry( start=int(self.end_points[0].X),
 													end=int(self.end_points[1].X),
 													step=1,
-													points=self.all_points,
+													lines=self.all_lines,
 													axis=parameters['axis'],
 													limit=parameters['limit'],
 													)

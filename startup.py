@@ -8,11 +8,11 @@ try:
     from System.Windows.Media.Imaging import BitmapImage
     from System import Uri
     #insert path to scripts in next line
-    path_to_scripts = os.path.abspath(r"C:\\Users\\igor\\Google Диск\\Code\\revit_scripts\\")
+    path_to_scripts = os.path.abspath(r"C:\\Users\\igor\\gdrive\\Code\\revit_scripts\\")
     scripts = {
         'PrintPDF':
         {
-            'folder': os.path.join(path_to_scripts, 'pyPrintPDF'),
+            'folder': os.path.join(path_to_scripts, 'PrintPDF'),
             'name': r"print_sheets.py",
             'dll': r"RPS_print_sheets.dll",
             'large_img': r"PythonScript32x32.png",
@@ -22,7 +22,7 @@ try:
         },
         'AddParameters':
         {
-            'folder': os.path.join(path_to_scripts, 'pyAddParameters'),
+            'folder': os.path.join(path_to_scripts, 'AddParameters'),
             'name': r"add_parameters.py",
             'dll': r"RPS_add_parameters.dll",
             'large_img': r"PythonScript32x32.png",
@@ -32,7 +32,7 @@ try:
         },
         'UnloadFamilies':
         {
-            'folder': os.path.join(path_to_scripts, 'pyUnloadUploadFamilies'),
+            'folder': os.path.join(path_to_scripts, 'UnloadUploadFamilies'),
             'name': r"unload_families.py",
             'dll': r"RPS_unload_families.dll",
             'large_img': r"PythonScript32x32.png",
@@ -42,13 +42,53 @@ try:
         },
         'NumerateHoles':
         {
-            'folder': os.path.join(path_to_scripts, 'pyNumerateHoles'),
+            'folder': os.path.join(path_to_scripts, 'NumerateHoles'),
             'name': r"pyNumerateHoles.py",
             'dll': r"RPS_numerate_holes.dll",
             'large_img': r"PythonScript32x32.png",
             'small_img': r"PythonScript16x16.png",
             'description': 'numerate holes',
             'pb_name': 'pb_numerate holes'
+        },
+        'SelectView':
+        {
+            'folder': os.path.join(path_to_scripts, 'SelectView'),
+            'name': r"select_view.py",
+            'dll': r"RPSAddin_select_view.dll",
+            'large_img': r"PythonScript32x32.png",
+            'small_img': r"PythonScript16x16.png",
+            'description': 'select view',
+            'pb_name': 'pb_select view'
+        },
+        'ExportSchedules':
+        {
+            'folder': os.path.join(path_to_scripts, 'ExportSchedules'),
+            'name': r"export_specification.py",
+            'dll': r"RPSAddin_export_specification.dll",
+            'large_img': r"PythonScript32x32.png",
+            'small_img': r"PythonScript16x16.png",
+            'description': 'export schedules',
+            'pb_name': 'pb_export schedules'
+        },
+        'HeatLossCalc':
+        {
+            'folder': os.path.join(path_to_scripts, 'HeatLossCalc'),
+            'name': r"app.py",
+            'dll': r"RPSAddin_heatloss_calc.dll",
+            'large_img': r"PythonScript32x32.png",
+            'small_img': r"PythonScript16x16.png",
+            'description': 'heat loss calc',
+            'pb_name': 'pb_heat loss calc'
+        },
+        'ViewCreator':
+        {
+            'folder': os.path.join(path_to_scripts, 'ViewCreator'),
+            'name': r"app.py",
+            'dll': r"RPSAddin_view_creator.dll",
+            'large_img': r"PythonScript32x32.png",
+            'small_img': r"PythonScript16x16.png",
+            'description': 'create views',
+            'pb_name': 'pb_create views'
         },
         # 'UploadFamilies':
         # {
