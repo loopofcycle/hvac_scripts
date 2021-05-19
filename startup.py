@@ -8,7 +8,11 @@ try:
     from System.Windows.Media.Imaging import BitmapImage
     from System import Uri
     #insert path to scripts in next line
-    path_to_scripts = os.path.abspath(r"C:\\Users\\igor\\gdrive\\Code\\revit_scripts\\")
+    appdata = os.getenv('APPDATA')
+    hvac_scripts = 'RevitPythonShell\\hvac_scripts\\'
+    path_to_scripts = os.path.join(appdata, hvac_scripts)
+    if not os.path.exists(path_to_scripts):
+        path_to_scripts = os.path.join('C:\\Users\\igor\\gdrive\\Code\\revit_scripts')
     scripts = {
         'PrintPDF':
         {
