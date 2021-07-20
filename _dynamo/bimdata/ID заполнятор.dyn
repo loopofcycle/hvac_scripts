@@ -1,0 +1,275 @@
+{
+  "Uuid": "0ed26dc6-95bd-427f-a266-348450593264",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "ID заполнятор",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "b4894e4f-3b94-4499-9aab-f195e0b74dac-000016f5",
+        "b4894e4f-3b94-4499-9aab-f195e0b74dac-00001719",
+        "b4894e4f-3b94-4499-9aab-f195e0b74dac-00001737",
+        "36a1b8d3-632e-444f-ab01-864535190287-000494d2",
+        "36a1b8d3-632e-444f-ab01-864535190287-000494fb",
+        "36a1b8d3-632e-444f-ab01-864535190287-00049520",
+        "36a1b8d3-632e-444f-ab01-864535190287-00049567",
+        "36a1b8d3-632e-444f-ab01-864535190287-0004956a"
+      ],
+      "Id": "9c575f0316724c18840bdf9ec11d43e8",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8dab0f5c4e084904b445502da16d01cf",
+          "Name": "Elements",
+          "Description": "Выбранные элементы.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.Id",
+      "Id": "ebc58192d3c749ae96ef99b37eec579e",
+      "Inputs": [
+        {
+          "Id": "636c0304cf80422581bd328dfd9c99a5",
+          "Name": "element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "503521e681dd418499787b3266038f0c",
+          "Name": "int",
+          "Description": "int",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Получение идентификатора для данного элемента\n\nElement.Id: int"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.SetParameterByName@string,var",
+      "Id": "d6e2a35b50df448ba4636ce1856f50ed",
+      "Inputs": [
+        {
+          "Id": "869f15fb876b4db995bcfb28e9d261ce",
+          "Name": "element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "bf3035c6833f469883c4c631b4b7a6eb",
+          "Name": "parameterName",
+          "Description": "Имя задаваемого параметра.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a274040c7d6e41bdb8d38306f04884c2",
+          "Name": "value",
+          "Description": "Значение.\n\nvar",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3fdde59ae84d4eeab95189ddff094b78",
+          "Name": "Element",
+          "Description": "Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Задание параметров для одного из элементов.\n\nElement.SetParameterByName (parameterName: string, value: var): Element"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"ID_элемента\";",
+      "Id": "24d686712a8c4fe2bb171c7f2ada93a0",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d752b0053487463990a8b890f5d1f12c",
+          "Name": "",
+          "Description": "Значение выражения в строке 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Обеспечивает возможность непосредственного авторства кода DesignScript"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.FromObject, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "26582dcb80e0448bbde622d2e2e037ec",
+      "Inputs": [
+        {
+          "Id": "f7f0f5517343488f9f0a20c5a41a488f",
+          "Name": "obj",
+          "Description": "Объект индексации",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6791dd2eb7a14fa7acdd36a22878fce4",
+          "Name": "str",
+          "Description": "Результат математических вычислений",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Преобразование объекта в строчное представление."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "8dab0f5c4e084904b445502da16d01cf",
+      "End": "636c0304cf80422581bd328dfd9c99a5",
+      "Id": "f8d3ce5518f34e3c9cdfe1bf7dcd3c2c"
+    },
+    {
+      "Start": "8dab0f5c4e084904b445502da16d01cf",
+      "End": "869f15fb876b4db995bcfb28e9d261ce",
+      "Id": "c653f043c77b4f3ea0b390522921508e"
+    },
+    {
+      "Start": "503521e681dd418499787b3266038f0c",
+      "End": "f7f0f5517343488f9f0a20c5a41a488f",
+      "Id": "5bac991fb7c14762bd6301d26a423172"
+    },
+    {
+      "Start": "d752b0053487463990a8b890f5d1f12c",
+      "End": "bf3035c6833f469883c4c631b4b7a6eb",
+      "Id": "f967f9cd7e584a119fb45aaee429337c"
+    },
+    {
+      "Start": "6791dd2eb7a14fa7acdd36a22878fce4",
+      "End": "a274040c7d6e41bdb8d38306f04884c2",
+      "Id": "52ccfa882e994b319d6bce5f911ad220"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.1.0.7500",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Select Model Elements",
+        "Id": "9c575f0316724c18840bdf9ec11d43e8",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 608.94684692129954,
+        "Y": 42.669472370144717
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Element.Id",
+        "Id": "ebc58192d3c749ae96ef99b37eec579e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 962.422324524234,
+        "Y": 334.660654134864
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Element.SetParameterByName",
+        "Id": "d6e2a35b50df448ba4636ce1856f50ed",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1557.4081086508777,
+        "Y": 48.954436126043191
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "24d686712a8c4fe2bb171c7f2ada93a0",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1175.5208747062065,
+        "Y": 146.73743957967241
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String from Object",
+        "Id": "26582dcb80e0448bbde622d2e2e037ec",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1228.8875791990879,
+        "Y": 346.38504584648661
+      }
+    ],
+    "Annotations": [],
+    "X": -327.47227902186,
+    "Y": 128.19933050807921,
+    "Zoom": 0.81927875276400741
+  }
+}

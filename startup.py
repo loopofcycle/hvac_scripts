@@ -1,4 +1,5 @@
 ﻿# script that is run when Revit starts in the IExternalApplication.Startup event.
+
 try:
     # add your code here
     from RevitPythonShell.RpsRuntime import ExternalCommandAssemblyBuilder
@@ -74,16 +75,16 @@ try:
             'description': 'export schedules',
             'pb_name': 'pb_export schedules'
         },
-        'HeatLossCalc':
-        {
-            'folder': os.path.join(path_to_scripts, 'HeatLossCalc'),
-            'name': r"app.py",
-            'dll': r"RPSAddin_heatloss_calc.dll",
-            'large_img': r"PythonScript32x32.png",
-            'small_img': r"PythonScript16x16.png",
-            'description': 'heat loss calc',
-            'pb_name': 'pb_heat loss calc'
-        },
+        # 'HeatLossCalc':
+        # {
+        #     'folder': os.path.join(path_to_scripts, 'HeatLossCalc'),
+        #     'name': r"app.py",
+        #     'dll': r"RPSAddin_heatloss_calc.dll",
+        #     'large_img': r"PythonScript32x32.png",
+        #     'small_img': r"PythonScript16x16.png",
+        #     'description': 'heat loss calc',
+        #     'pb_name': 'pb_heat loss calc'
+        # },
         'ViewCreator':
         {
             'folder': os.path.join(path_to_scripts, 'ViewCreator'),
@@ -94,6 +95,18 @@ try:
             'description': 'create views',
             'pb_name': 'pb_create views'
         },
+
+        'TestScript':
+        {
+            'folder': os.path.join(path_to_scripts, 'TestScript'),
+            'name': r"app.py",
+            'dll': r"RPSAddin_test_script.dll",
+            'large_img': r"PythonScript32x32.png",
+            'small_img': r"PythonScript16x16.png",
+            'description': 'for testing',
+            'pb_name': 'pb_test_script'
+        },
+
         # 'UploadFamilies':
         # {
         #     'folder': r"C:\\Users\\igor\\Google Диск\\Code\\pyUnloadUploadFamilies",
@@ -124,3 +137,5 @@ try:
 except:
     import traceback       # note: add a python27 library to your search path first!
     traceback.print_exc()  # helps you debug when things go wrong
+
+

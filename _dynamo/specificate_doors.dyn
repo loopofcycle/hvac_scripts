@@ -1,0 +1,281 @@
+{
+  "Uuid": "7148072e-5976-4382-9abf-8314b16fac37",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "specificate_doors",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "from datetime import datetime\r\nfrom pprint import pprint\r\nimport clr\r\nimport sys\r\nimport math\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\npyt_path = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\r\nsys.path.append(pyt_path)\r\n\r\n# Import ToDSType(bool) extension method\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\n# Import DocumentManager and TransactionManager\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n# Import RevitAPI\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\ndef get_levels_dict(doc):\r\n\tlevels_list = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Levels).WhereElementIsNotElementType().ToElements()\r\n\tlevels = {l: l.ProjectElevation for l in levels_list }\r\n\r\n\tlevels_dict = dict()\r\n\tsorted_elevations = sorted(levels.values())\r\n\tfor level in levels:\r\n\t\tindex = sorted_elevations.index(level.ProjectElevation)\r\n\t\t#levels_dict[level.Id] = 'Уровень ' + str(index)\r\n\t\tlevels_dict[level.Name] = 'Уровень ' + str(index + 1)\r\n\t\r\n\treturn levels_dict\r\n\t\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\n\r\ncategories = [\r\n\t\t\t\tBuiltInCategory.OST_Doors,\r\n\t\t\t\tBuiltInCategory.OST_Windows,\r\n\r\n#\t\t\t\tnot working with walls\r\n\t\t\t\t#BuiltInCategory.OST_Walls,\r\n\t\t\t]\r\n\r\nlevels = get_levels_dict(doc)\r\nall_elements = []\r\nproj_params = []\r\n\r\nwith Transaction(doc, 'specificating doors') as t:\r\n\tt.Start()\r\n\tfor category in categories:\r\n\t\telements = FilteredElementCollector(doc).OfCategory(category).WhereElementIsNotElementType().ToElements()\r\n\t\tfor element in elements:\r\n\t\t\tall_elements.append(element)\r\n\r\n\t\t\tlevel = element.LookupParameter('Уровень')\r\n\t\t\tparam = levels[level.AsValueString()]\r\n\t\t\tproj_params.append(param)\r\n\t\t\t\r\n\tt.Commit()\r\n\r\nOUT = [all_elements, proj_params]",
+      "VariableInputPorts": true,
+      "Id": "71ad9a08236c4a60b3969656817bd789",
+      "Inputs": [
+        {
+          "Id": "9e557592b9da418e83b9ab89a0841d56",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e16cf84234df4a6fafd9f68fbf544476",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.LastItem@var[]..[]",
+      "Id": "d06e839891214755a3a02c36b81b7a88",
+      "Inputs": [
+        {
+          "Id": "125c39dff83547fbb4bc92aa38ceff00",
+          "Name": "list",
+          "Description": "Список, из которого требуется получить последний элемент.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b5591542447d48c9af5e85ed0a66ecdd",
+          "Name": "last",
+          "Description": "Последний элемент в списке.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Извлечение последнего элемента в списке.\n\nList.LastItem (list: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.FirstItem@var[]..[]",
+      "Id": "74d6f8a78a564ef69ad8e35177a40489",
+      "Inputs": [
+        {
+          "Id": "f855dddad6e44038b649a53122d90be5",
+          "Name": "list",
+          "Description": "Список, из которого требуется получить первый элемент.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ce1f88affa0f4d5fbacc85cae0279029",
+          "Name": "item",
+          "Description": "Первый элемент в списке.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Получение первого элемента в списке.\n\nList.FirstItem (list: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.SetParameterByName@string,var",
+      "Id": "593e9b443d274f3cba86990f05a5ba06",
+      "Inputs": [
+        {
+          "Id": "c547b6fc0ac340d29dcddaabed4c3604",
+          "Name": "element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2cfeb121aa414a27ae7ee199defe5b89",
+          "Name": "parameterName",
+          "Description": "Имя задаваемого параметра.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1b443efd32204c55a274293df9879e4f",
+          "Name": "value",
+          "Description": "Значение.\n\nvar",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "983c020a6af9411ea6c62a4582c261e8",
+          "Name": "Element",
+          "Description": "Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Задание параметров для одного из элементов.\n\nElement.SetParameterByName (parameterName: string, value: var): Element"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 1.0,
+      "Id": "0d33bf1e9bde4a189c9a716782218b37",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "23a444a122044598bcf9a3a085504847",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание числа."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "e16cf84234df4a6fafd9f68fbf544476",
+      "End": "f855dddad6e44038b649a53122d90be5",
+      "Id": "2f4f712d2c104e0ab53c1032bbcc0bea"
+    },
+    {
+      "Start": "e16cf84234df4a6fafd9f68fbf544476",
+      "End": "125c39dff83547fbb4bc92aa38ceff00",
+      "Id": "29c79494986d4f64a755c0d97e67ed28"
+    },
+    {
+      "Start": "b5591542447d48c9af5e85ed0a66ecdd",
+      "End": "2cfeb121aa414a27ae7ee199defe5b89",
+      "Id": "b13a96b0f85b482ca57d167a47c5d9ca"
+    },
+    {
+      "Start": "ce1f88affa0f4d5fbacc85cae0279029",
+      "End": "c547b6fc0ac340d29dcddaabed4c3604",
+      "Id": "b2f27d6645ec46eebcdb34b888c26ae8"
+    },
+    {
+      "Start": "23a444a122044598bcf9a3a085504847",
+      "End": "1b443efd32204c55a274293df9879e4f",
+      "Id": "a5da4e7895cc4e59a8e547c28c6655e6"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.3.0.5885",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "71ad9a08236c4a60b3969656817bd789",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 414.95592706545932,
+        "Y": -191.1652029137058
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.LastItem",
+        "Id": "d06e839891214755a3a02c36b81b7a88",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 690.60940175050371,
+        "Y": 82.096099572181288
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.FirstItem",
+        "Id": "74d6f8a78a564ef69ad8e35177a40489",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 700.58315430034668,
+        "Y": -307.57773619068826
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Element.SetParameterByName",
+        "Id": "593e9b443d274f3cba86990f05a5ba06",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1071.216907458806,
+        "Y": 100.99119705586645
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Number",
+        "Id": "0d33bf1e9bde4a189c9a716782218b37",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 914.58393693521737,
+        "Y": 165.99630173728792
+      }
+    ],
+    "Annotations": [],
+    "X": -137.30339579522257,
+    "Y": 254.49270403298459,
+    "Zoom": 0.5090063999107064
+  }
+}

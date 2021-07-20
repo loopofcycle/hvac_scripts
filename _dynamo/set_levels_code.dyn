@@ -1,0 +1,450 @@
+{
+  "Uuid": "ee4b15ea-6bad-4af3-8ae8-83bcf0105578",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "set_levels_code",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.Data.ParseJSON@string",
+      "Id": "04343b30539243f9a1256714575040c3",
+      "Inputs": [
+        {
+          "Id": "4e45fd93481d432dba4c93017c1a2229",
+          "Name": "json",
+          "Description": "Строка формата JSON\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1b354c5cd21041c7b534a60ca3165e41",
+          "Name": "result",
+          "Description": "Тип результата зависит от содержимого строки ввода. Результат может быть элементарным значением (например, строковым, логическим или двойным значением), списком либо словарем.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Анализ преобразует произвольную строку формата JSON в значение. Противоположно методу JSON.Stringify.\n\nData.ParseJSON (json: string): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.IO.FileSystem.ReadText@var",
+      "Id": "b3b2967d7be2413da6c5e4a63167aa02",
+      "Inputs": [
+        {
+          "Id": "96b5f5499cea4d5a9ce58993acf5d542",
+          "Name": "file",
+          "Description": "var",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "355c6dbda5c64a90a5929f067e38aa54",
+          "Name": "str",
+          "Description": "Содержимое текстового файла.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Чтение текстового файла с выводом содержимого в виде строки.\n\nFileSystem.ReadText (file: var): string"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.FileObject, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "38c9e76f53434db89c6b864577d4c66d",
+      "Inputs": [
+        {
+          "Id": "60c93da7a8bb4f2ba929ed5dbd52ec91",
+          "Name": "path",
+          "Description": "Путь к файлу.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "791b9d70312241999375c554bdae6b25",
+          "Name": "file",
+          "Description": "Файловый объект",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание нового объекта на основе пути."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport sys\r\nimport math\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\npyt_path = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\r\nsys.path.append(pyt_path)\r\n\r\n# Import ToDSType(bool) extension method\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\n# Import DocumentManager and TransactionManager\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n# Import RevitAPI\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\n\r\ndef GetCodeAsString(element, level_codes={}):\r\n\t\r\n\tlevels_list = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Levels).WhereElementIsNotElementType().ToElements()\r\n\tlevels = { l.Id: l.Name for l in levels_list }\t\r\n\t\r\n\tcode = ''\r\n\tlevel_name = ''\r\n\t\r\n\tif element.LevelId.IntegerValue > 0:\r\n\t\tlevel_name = levels[element.LevelId]\r\n\telse:\r\n\t\tlevel_name = levels[element.ReferenceLevel.Id]\r\n\t\r\n\tif level_name not in levels.values():\r\n\t\tcode = 'level not required'\t\r\n\t\t\r\n\tif level_codes.get(level_name):\r\n\t\tcode = level_codes[level_name]\r\n\t\r\n\treturn code\r\n\r\n\r\n# Разместите код под этой строкой\r\nlevel_codes = IN[0]\r\n\r\n\r\ncategories = [\r\n\t\t\tBuiltInCategory.OST_MechanicalEquipment,\r\n\t\t\tBuiltInCategory.OST_PipeCurves,\r\n\t\t\tBuiltInCategory.OST_PipeFitting,\r\n\t\t\tBuiltInCategory.OST_PipeAccessory,\r\n\t\t\tBuiltInCategory.OST_DuctCurves,\r\n\t\t\tBuiltInCategory.OST_DuctFitting,\r\n\t\t\tBuiltInCategory.OST_DuctAccessory,\r\n\t\t\tBuiltInCategory.OST_DuctTerminal,\r\n\t\t\t]\r\n\r\nout_elements = []\r\nelement_codes = []\r\n\r\nfor category in categories:\r\n\telements = FilteredElementCollector(doc).OfCategory(category).WhereElementIsNotElementType().ToElements()\r\n\t\r\n\tfor element in elements:\r\n\t\telement_code = GetCodeAsString(element, level_codes)\r\n\t\t\r\n\t\tout_elements.append(element)\r\n\t\telement_codes.append(element_code)\r\n\r\nOUT = [out_elements, element_codes]\r\n",
+      "VariableInputPorts": true,
+      "Id": "cd6ac8fc454c40df80ccb7cdc9937dd1",
+      "Inputs": [
+        {
+          "Id": "656ce7fef1fc4282b962eb41628a93a7",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "99b6e99f0c8b4042980f6cdf9d739a77",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.FirstItem@var[]..[]",
+      "Id": "0704bc985adf468fa649b0dd9fe9409f",
+      "Inputs": [
+        {
+          "Id": "0e9fe8e84d4244cf8f73078c5a9258fd",
+          "Name": "list",
+          "Description": "Список, из которого требуется получить первый элемент.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2223178dc7194513b57fd037393b103a",
+          "Name": "item",
+          "Description": "Первый элемент в списке.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Получение первого элемента в списке.\n\nList.FirstItem (list: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "Шифр РД(лист/изм)",
+      "Id": "b91927d9bf084f97b75fff71db1678f5",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "00b14a350b2d47e198f0767e2fa14624",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Создание строки."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.LastItem@var[]..[]",
+      "Id": "26e5d744307a4d6e84934d0e5bb5e746",
+      "Inputs": [
+        {
+          "Id": "2f09a97549904bc9a4a17db2b50f44e4",
+          "Name": "list",
+          "Description": "Список, из которого требуется получить последний элемент.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b2f2c074ef184d1097d5adc58c6774f0",
+          "Name": "last",
+          "Description": "Последний элемент в списке.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Извлечение последнего элемента в списке.\n\nList.LastItem (list: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.SetParameterByName@string,var",
+      "Id": "3bf164d00b3445d6af8be4da0d5ff46b",
+      "Inputs": [
+        {
+          "Id": "a315aad03fc14f499e7570d8280ebd7c",
+          "Name": "element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "34731cc49ef74af49355eed439fcf39c",
+          "Name": "parameterName",
+          "Description": "Имя задаваемого параметра.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "db8193fa2f9e49afb9393c32352cd07a",
+          "Name": "value",
+          "Description": "Значение.\n\nvar",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "347632a9ac754156bf29fadbd00be258",
+          "Name": "Element",
+          "Description": "Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Задание параметров для одного из элементов.\n\nElement.SetParameterByName (parameterName: string, value: var): Element"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Загрузить стандартную библиотеку Python и библиотеку DesignScript\r\nimport math\r\nimport clr\r\nfrom pprint import pprint\r\n\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\npyt_path = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\r\nsys.path.append(pyt_path)\r\n\r\n# Import ToDSType(bool) extension method\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\n# Import DocumentManager and TransactionManager\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n# Import RevitAPI\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\n\r\n# Разместите код под этой строкой\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n# Назначьте вывод переменной OUT.\r\nrevit_file = list(doc.PathName.Split('\\\\')).pop()\r\njson_file = list(doc.PathName.Split('\\\\')).pop().replace('.rvt', '.json')\r\njson_path = doc.PathName.replace(revit_file, json_file)\r\n\r\nOUT = json_path",
+      "VariableInputPorts": true,
+      "Id": "d99d96d102dd4aaeafe25ad6c5d7a95e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5d1327eb36014b488f992737882dd759",
+          "Name": "OUT",
+          "Description": "Результат сценария Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Выполнение встроенного сценария IronPython."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "1b354c5cd21041c7b534a60ca3165e41",
+      "End": "656ce7fef1fc4282b962eb41628a93a7",
+      "Id": "33ebf9081cd8442cbd6eeb642f600309"
+    },
+    {
+      "Start": "355c6dbda5c64a90a5929f067e38aa54",
+      "End": "4e45fd93481d432dba4c93017c1a2229",
+      "Id": "e6a0b8b661304941a66e77c89f6b11f8"
+    },
+    {
+      "Start": "791b9d70312241999375c554bdae6b25",
+      "End": "96b5f5499cea4d5a9ce58993acf5d542",
+      "Id": "2438e4a211bb48558b0d52ae09f4e050"
+    },
+    {
+      "Start": "99b6e99f0c8b4042980f6cdf9d739a77",
+      "End": "0e9fe8e84d4244cf8f73078c5a9258fd",
+      "Id": "6157773ec16b4580bc646a3567a87c7c"
+    },
+    {
+      "Start": "99b6e99f0c8b4042980f6cdf9d739a77",
+      "End": "2f09a97549904bc9a4a17db2b50f44e4",
+      "Id": "5ece5114cad64aca9e39582a56badcf3"
+    },
+    {
+      "Start": "2223178dc7194513b57fd037393b103a",
+      "End": "a315aad03fc14f499e7570d8280ebd7c",
+      "Id": "ff1d47b8d862406a9f5caa732bf40b61"
+    },
+    {
+      "Start": "00b14a350b2d47e198f0767e2fa14624",
+      "End": "34731cc49ef74af49355eed439fcf39c",
+      "Id": "12ab2d6eb9db4087944e75333fa4cf43"
+    },
+    {
+      "Start": "b2f2c074ef184d1097d5adc58c6774f0",
+      "End": "db8193fa2f9e49afb9393c32352cd07a",
+      "Id": "94a1cd564e9f479dbb10050009d704ea"
+    },
+    {
+      "Start": "5d1327eb36014b488f992737882dd759",
+      "End": "60c93da7a8bb4f2ba929ed5dbd52ec91",
+      "Id": "26c967a82ecc4f91ac84c8b0cff080db"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.3.0.5885",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Фоновый просмотр",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Data.ParseJSON",
+        "Id": "04343b30539243f9a1256714575040c3",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 20000.775985933356,
+        "Y": 10089.083043046008
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "FileSystem.ReadText",
+        "Id": "b3b2967d7be2413da6c5e4a63167aa02",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 19830.513399625033,
+        "Y": 10085.001694721055
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "File From Path",
+        "Id": "38c9e76f53434db89c6b864577d4c66d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 19701.258165530868,
+        "Y": 10085.073966520118
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "GetCodesForElements",
+        "Id": "cd6ac8fc454c40df80ccb7cdc9937dd1",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 20201.753685078733,
+        "Y": 10089.620884392323
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.FirstItem",
+        "Id": "0704bc985adf468fa649b0dd9fe9409f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 20500.73631020229,
+        "Y": 9674.635278371079
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String",
+        "Id": "b91927d9bf084f97b75fff71db1678f5",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 20506.247700050622,
+        "Y": 10086.783150811078
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.LastItem",
+        "Id": "26e5d744307a4d6e84934d0e5bb5e746",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 20507.16871593826,
+        "Y": 10193.932855045608
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Element.SetParameterByName",
+        "Id": "3bf164d00b3445d6af8be4da0d5ff46b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 20877.745340319387,
+        "Y": 10039.095489448619
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Get_JSON_Path",
+        "Id": "d99d96d102dd4aaeafe25ad6c5d7a95e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 19546.71559728196,
+        "Y": 10083.877048224351
+      }
+    ],
+    "Annotations": [],
+    "X": -10312.656043942874,
+    "Y": -5150.9343389865808,
+    "Zoom": 0.54174551554240258
+  }
+}
